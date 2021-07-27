@@ -22,6 +22,7 @@ from django.template.defaultfilters import urlencode, stringformat, filesizeform
 from desktop.lib.django_util import reverse_with_get, extract_field_data
 from django.utils.encoding import smart_str
 
+from desktop.conf import RAZ
 from filebrowser.conf import ENABLE_EXTRACT_UPLOADED_ARCHIVE
 
 if sys.version_info[0] > 2:
@@ -61,7 +62,13 @@ else:
         <th class="sortable sorting" data-sort="mtime" width="15%" data-bind="click: sort">${_('Date')}</th>
       </tr>
     </thead>
+    % if not RAZ.IS_ENABLED.get():
     <tbody id="files" data-bind="template: {name: 'fileTemplate', foreach: files}"></tbody>
+    % else:
+     <!-- ko ifnot: isS3 -->
+    <tbody id="files" data-bind="template: {name: 'fileTemplate', foreach: files}"></tbody>
+     <!-- /ko -->
+    % endif
     <tfoot>
       <tr data-bind="visible: files().length === 0 && !isLoading()">
         <td colspan="8">
